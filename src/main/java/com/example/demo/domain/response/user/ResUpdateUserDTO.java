@@ -1,4 +1,4 @@
-package com.example.demo.domain.response;
+package com.example.demo.domain.response.user;
 
 import java.time.Instant;
 
@@ -9,12 +9,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ResUserDTO {
+public class ResUpdateUserDTO {
     private long id;
     private String name;
     private String phone;
     private GenderEnum gender;
     private String email;
     private String address;
-    private Instant createAt;
+    private Instant updatedAt;
 }

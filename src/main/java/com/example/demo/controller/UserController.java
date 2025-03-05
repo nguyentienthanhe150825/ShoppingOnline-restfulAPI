@@ -5,12 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.User;
-import com.example.demo.domain.response.ResUserDTO;
+import com.example.demo.domain.response.user.ResUpdateUserDTO;
+import com.example.demo.domain.response.user.ResUserDTO;
 import com.example.demo.service.UserService;
 import com.example.demo.util.exception.InvalidException;
 
@@ -47,5 +49,16 @@ public class UserController {
         }
         ResUserDTO userDTO = this.userService.convertToResUserDTO(user);
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
+    }
+
+    @PutMapping("/users")
+    public ResponseEntity<ResUpdateUserDTO> updateUser(@RequestBody User requestUser) throws InvalidException {
+        User userUpdate = this.userService.handleUpdateUser(requestUser);
+        if (userUpdate == null) {
+            throw new InvalidException("User with id = " + requestUser.getId() + " not exist");
+        }
+        
+        ResUpdateUserDTO userDTO = this.userService.convertToResUpdateUserDTO(userUpdate);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userDTO);
     }
 }
