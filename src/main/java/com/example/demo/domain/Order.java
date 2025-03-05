@@ -2,8 +2,13 @@ package com.example.demo.domain;
 
 import java.time.Instant;
 
+import com.example.demo.util.constant.PaymentMethodEnum;
+import com.example.demo.util.constant.StatusEnum;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,12 +30,14 @@ public class Order {
     
     private double totalPrice;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
 
     @Column(columnDefinition = "MEDIUMTEXT")
     private String shippingAddress;
 
-    private String paymentMethod;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodEnum paymentMethod;
 
     private String trackingNumber;
 
