@@ -36,6 +36,9 @@ public class User {
 
     private String phone;
 
+    @NotBlank(message = "Password cannot be blank")
+    private String password;
+
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
 

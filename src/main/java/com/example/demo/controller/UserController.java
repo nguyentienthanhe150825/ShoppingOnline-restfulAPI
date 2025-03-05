@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.User;
+import com.example.demo.domain.response.ResCreateUserDTO;
 import com.example.demo.service.UserService;
 
 import jakarta.validation.Valid;
@@ -23,8 +24,9 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<User> createNewUser(@Valid @RequestBody User createUser) {
+    public ResponseEntity<ResCreateUserDTO> createNewUser(@Valid @RequestBody User createUser) {
         User newUser = this.userService.handleCreateUser(createUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        ResCreateUserDTO userDTO = this.userService.convertToResCreateUserDTO(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
     }
 }
