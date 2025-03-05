@@ -14,6 +14,7 @@ import com.example.demo.domain.response.ResResponse;
 @RestControllerAdvice
 public class GlobalException {
 
+    // Handle Lỗi sử dụng @Valid check input
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex,
             WebRequest request) {
@@ -34,10 +35,23 @@ public class GlobalException {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ResResponse<Object>> handleEnumValidateException(IllegalArgumentException ex, WebRequest request) {
+    public ResponseEntity<ResResponse<Object>> handleEnumValidateException(IllegalArgumentException ex,
+            WebRequest request) {
         ResResponse<Object> res = new ResResponse<>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setError("Validate Enum Error...");
+        res.setTimestamp(new Date());
+        res.setPath(request.getDescription(false).replace("uri=", ""));
+        res.setMessage(ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
+    @ExceptionHandler(InvalidException.class)
+    public ResponseEntity<ResResponse<Object>> handleInvalidException(Exception ex, WebRequest request) {
+        ResResponse<Object> res = new ResResponse<>();
+        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setError("Exception occurs...");
         res.setTimestamp(new Date());
         res.setPath(request.getDescription(false).replace("uri=", ""));
         res.setMessage(ex.getMessage());
