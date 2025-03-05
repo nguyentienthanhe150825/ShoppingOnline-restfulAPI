@@ -32,4 +32,16 @@ public class GlobalException {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ResResponse<Object>> handleEnumValidateException(IllegalArgumentException ex, WebRequest request) {
+        ResResponse<Object> res = new ResResponse<>();
+        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setError("Validate Enum Error...");
+        res.setTimestamp(new Date());
+        res.setPath(request.getDescription(false).replace("uri=", ""));
+        res.setMessage(ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
 }

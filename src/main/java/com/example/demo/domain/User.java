@@ -4,11 +4,11 @@ import java.time.Instant;
 import java.util.List;
 
 import com.example.demo.util.constant.GenderEnum;
+import com.example.demo.util.exception.GenderEnumPattern;
+import com.example.demo.util.exception.PhoneNumber;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,12 +34,13 @@ public class User {
     @NotBlank(message = "Name cannot be blank")
     private String name;
 
+    @PhoneNumber
     private String phone;
 
     @NotBlank(message = "Password cannot be blank")
     private String password;
 
-    @Enumerated(EnumType.STRING)
+    @GenderEnumPattern(name = "gender", regexp = "MALE|FEMALE|OTHER")
     private GenderEnum gender;
 
     @NotNull(message = "Email cannot be null")
