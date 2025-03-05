@@ -3,9 +3,12 @@ package com.example.demo.domain;
 import java.time.Instant;
 import java.util.List;
 
+import com.example.demo.util.constant.GenderEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,6 +35,9 @@ public class User {
     private String name;
 
     private String phone;
+
+    @Enumerated(EnumType.STRING)
+    private GenderEnum gender;
 
     @NotNull(message = "Email cannot be null")
     private String email;
