@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.User;
-import com.example.demo.domain.response.ResCreateUserDTO;
+import com.example.demo.domain.response.ResUserDTO;
 import com.example.demo.repository.UserRepository;
 
 @Service
@@ -19,8 +21,8 @@ public class UserService {
         return this.userRepository.save(createUser);
     }
 
-    public ResCreateUserDTO convertToResCreateUserDTO(User user) {
-        ResCreateUserDTO res = new ResCreateUserDTO();
+    public ResUserDTO convertToResUserDTO(User user) {
+        ResUserDTO res = new ResUserDTO();
         res.setId(user.getId());
         res.setName(user.getName());
         res.setPhone(user.getPhone());
@@ -34,5 +36,13 @@ public class UserService {
 
     public boolean checkEmailExist(String email) {
         return this.userRepository.existsByEmail(email);
+    }
+
+    public User handleGetUserById(long id) {
+        Optional<User> userOptional = this.userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        }
+        return null;
     }
 }

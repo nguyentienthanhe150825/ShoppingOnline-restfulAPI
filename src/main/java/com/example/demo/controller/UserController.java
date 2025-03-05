@@ -2,13 +2,15 @@ package com.example.demo.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.User;
-import com.example.demo.domain.response.ResCreateUserDTO;
+import com.example.demo.domain.response.ResUserDTO;
 import com.example.demo.service.UserService;
 import com.example.demo.util.exception.InvalidException;
 
@@ -25,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<ResCreateUserDTO> createNewUser(@Valid @RequestBody User createUser) throws InvalidException {
+    public ResponseEntity<ResUserDTO> createNewUser(@Valid @RequestBody User createUser) throws InvalidException {
         // check email exist in database
         boolean isEmailExist = this.userService.checkEmailExist(createUser.getEmail());
         if (isEmailExist == true) {
@@ -33,7 +35,17 @@ public class UserController {
         }
 
         User newUser = this.userService.handleCreateUser(createUser);
-        ResCreateUserDTO userDTO = this.userService.convertToResCreateUserDTO(newUser);
+        ResUserDTO userDTO = this.userService.convertToResUserDTO(newUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<ResUserDTO> getUserById(@PathVariable("id") long id) throws InvalidException {
+        User user = this.userService.handleGetUserById(id);
+        if (user == null) {
+            throw new InvalidException("User with id = " + id + " not exist");
+        }
+        ResUserDTO userDTO = this.userService.convertToResUserDTO(user);
+        return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 }
