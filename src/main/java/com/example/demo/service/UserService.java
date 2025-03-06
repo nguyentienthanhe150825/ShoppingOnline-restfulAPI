@@ -41,6 +41,7 @@ public class UserService {
         res.setGender(user.getGender());
         res.setEmail(user.getEmail());
         res.setAddress(user.getAddress());
+        res.setAvatar(user.getAvatar());
         res.setCreateAt(user.getCreateAt());
 
         return res;
@@ -81,6 +82,7 @@ public class UserService {
         res.setGender(user.getGender());
         res.setEmail(user.getEmail());
         res.setAddress(user.getAddress());
+        res.setAvatar(user.getAvatar());
         res.setUpdatedAt(user.getUpdatedAt());
 
         return res;

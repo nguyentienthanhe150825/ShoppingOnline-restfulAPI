@@ -48,6 +48,8 @@ public class User {
 
     private String address;
 
+    private String avatar;
+
     private Instant createAt;
 
     private Instant updatedAt;
