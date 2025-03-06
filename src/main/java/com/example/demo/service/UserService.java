@@ -9,20 +9,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.domain.Order;
 import com.example.demo.domain.User;
 import com.example.demo.domain.response.Meta;
 import com.example.demo.domain.response.ResultPaginationDTO;
 import com.example.demo.domain.response.user.ResUpdateUserDTO;
 import com.example.demo.domain.response.user.ResUserDTO;
+import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.UserRepository;
 
 @Service
 public class UserService {
     // Dependency Inject: Constructor
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, OrderRepository orderRepository) {
         this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
     }
 
     public User handleCreateUser(User createUser) {
@@ -102,5 +106,18 @@ public class UserService {
         result.setResult(listUsers);
 
         return result;
+    }
+
+    public void handleDeleteUser(long id) {
+        User user = this.handleGetUserById(id);
+        if (user != null) {
+            // Fetch all order belong to this user
+            List<Order> listOrders = this.orderRepository.findByUser(user);
+
+            // Delete all order
+            this.orderRepository.deleteAll(listOrders);
+        }
+        // Delete user by id
+        this.userRepository.deleteById(id);
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,5 +71,15 @@ public class UserController {
         
         ResUpdateUserDTO userDTO = this.userService.convertToResUpdateUserDTO(userUpdate);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(userDTO);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable("id") long id) throws InvalidException {
+        User user = this.userService.handleGetUserById(id);
+        if (user == null) {
+            throw new InvalidException("User with id = " + id + " not exist");
+        }
+        this.userService.handleDeleteUser(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Delete User Success");
     }
 }
