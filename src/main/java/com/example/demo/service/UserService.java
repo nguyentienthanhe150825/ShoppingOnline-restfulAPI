@@ -2,11 +2,13 @@ package com.example.demo.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -147,10 +149,27 @@ public class UserService {
         }
     }
 
-    public String storeAvatar(String folder, MultipartFile file) throws URISyntaxException {
+    public String storeAvatar(String folder, MultipartFile file) throws URISyntaxException, IOException {
         // create unique fileName
-        
+        String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
 
-        throw new UnsupportedOperationException("Unimplemented method 'storeAvatar'");
+        URI uri = new URI(folder + "/" + fileName);
+        Path path = Paths.get(uri);
+        try (InputStream inputStream = file.getInputStream()) {
+            Files.copy(inputStream, path,
+                    StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        return fileName;
+        // https://spring.io/guides/gs/uploading-files
     }
+
+    public User uploadAvatarInDatabase(String uploadAvatar, long id) {
+        User currentUser = this.handleGetUserById(id);
+        if (currentUser != null) {
+            currentUser.setAvatar(uploadAvatar);
+        }
+        return this.userRepository.save(currentUser);
+    }
+    
 }

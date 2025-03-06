@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.domain.User;
 import com.example.demo.domain.response.ResultPaginationDTO;
-import com.example.demo.domain.response.file.ResUploadFileDTO;
 import com.example.demo.domain.response.user.ResUpdateUserDTO;
 import com.example.demo.domain.response.user.ResUserDTO;
 import com.example.demo.service.UserService;
@@ -94,10 +94,10 @@ public class UserController {
     }
 
     @PutMapping(value = "/users/{id}/avatar", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<ResUploadFileDTO> upload(@PathVariable("id") long id,
+    public ResponseEntity<ResUpdateUserDTO> upload(@PathVariable("id") long id,
             @RequestParam(name = "file", required = false) MultipartFile file,
-            @RequestParam("folder") String folder) throws InvalidException, URISyntaxException {
-
+            @RequestParam("folder") String folder) throws InvalidException, URISyntaxException, IOException {
+        // check user id exist
         User user = this.userService.handleGetUserById(id);
         if (user == null) {
             throw new InvalidException("User with id = " + id + " not exist");
@@ -108,7 +108,11 @@ public class UserController {
         // store avatar
         String uploadAvatar = this.userService.storeAvatar(baseURI + folder, file);
 
-        ResUploadFileDTO res = new ResUploadFileDTO();
+        // save avatarUrl in database
+        User updateUserAvatar = this.userService.uploadAvatarInDatabase(uploadAvatar, id);
+
+        // conver to ResUploadAvatarDTO
+        ResUpdateUserDTO res = this.userService.convertToResUpdateUserDTO(updateUserAvatar);
 
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
