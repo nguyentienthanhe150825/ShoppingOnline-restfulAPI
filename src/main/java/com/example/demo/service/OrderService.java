@@ -1,11 +1,18 @@
 package com.example.demo.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.Order;
 import com.example.demo.domain.User;
+import com.example.demo.domain.response.Meta;
+import com.example.demo.domain.response.ResultPaginationDTO;
 import com.example.demo.domain.response.order.ResOrderDTO;
 import com.example.demo.repository.OrderRepository;
 
@@ -61,6 +68,27 @@ public class OrderService {
             return orderOptional.get();
         }
         return null;
+    }
+
+    public ResultPaginationDTO fetchAllOrders(Specification<Order> spec, Pageable pageable) {
+        Page<Order> pageOrder = this.orderRepository.findAll(spec, pageable);
+        ResultPaginationDTO result = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+
+        meta.setPages(pageOrder.getTotalPages());
+        meta.setTotal(pageOrder.getTotalElements());
+
+        result.setMeta(meta);
+
+        List<ResOrderDTO> listOrders = pageOrder.getContent().stream().map(item -> this.convertToResOrderDTO(item))
+                .collect(Collectors.toList());
+        
+        result.setResult(listOrders);
+
+        return result;
     }
 
 }

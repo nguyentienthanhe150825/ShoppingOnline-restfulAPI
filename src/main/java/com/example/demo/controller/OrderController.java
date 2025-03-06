@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.Order;
+import com.example.demo.domain.response.ResultPaginationDTO;
 import com.example.demo.domain.response.order.ResOrderDTO;
 import com.example.demo.service.OrderService;
 import com.example.demo.util.exception.InvalidException;
+import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 
@@ -44,6 +48,13 @@ public class OrderController {
 
         ResOrderDTO orderDTO = this.orderService.convertToResOrderDTO(order);
         return ResponseEntity.status(HttpStatus.OK).body(orderDTO);
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<ResultPaginationDTO> getAllOrders(@Filter Specification<Order> spec, Pageable pageable) {
+        ResultPaginationDTO result = this.orderService.fetchAllOrders(spec, pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
 }
