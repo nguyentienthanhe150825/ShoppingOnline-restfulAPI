@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.Order;
 import com.example.demo.domain.User;
-import com.example.demo.domain.response.order.ResCreateOrderDTO;
+import com.example.demo.domain.response.order.ResOrderDTO;
 import com.example.demo.repository.OrderRepository;
 
 @Service
@@ -31,8 +33,8 @@ public class OrderService {
         return this.orderRepository.save(order);
     }
 
-    public ResCreateOrderDTO convertToResCreateOrderDTO(Order order) {
-        ResCreateOrderDTO resOrderDTO = new ResCreateOrderDTO();
+    public ResOrderDTO convertToResOrderDTO(Order order) {
+        ResOrderDTO resOrderDTO = new ResOrderDTO();
         resOrderDTO.setId(order.getId());
         resOrderDTO.setTotalPrice(order.getTotalPrice());
         resOrderDTO.setStatus(order.getStatus());
@@ -41,7 +43,7 @@ public class OrderService {
         resOrderDTO.setTrackingNumber(order.getTrackingNumber());
         resOrderDTO.setOrderDate(order.getOrderDate());
 
-        ResCreateOrderDTO.UserOrder userDTO = new ResCreateOrderDTO.UserOrder();
+        ResOrderDTO.UserOrder userDTO = new ResOrderDTO.UserOrder();
 
         if (order.getUser() != null) {
             userDTO.setId(order.getUser().getId());
@@ -51,6 +53,14 @@ public class OrderService {
         }
 
         return resOrderDTO;
+    }
+
+    public Order handleGetOrderById(long id) {
+        Optional<Order> orderOptional = this.orderRepository.findById(id);
+        if (orderOptional.isPresent()) {
+            return orderOptional.get();
+        }
+        return null;
     }
 
 }

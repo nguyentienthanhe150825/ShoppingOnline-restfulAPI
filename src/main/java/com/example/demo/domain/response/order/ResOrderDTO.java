@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ResCreateOrderDTO {
+public class ResOrderDTO {
     private long id;
     private double totalPrice;
     private StatusEnum status;
