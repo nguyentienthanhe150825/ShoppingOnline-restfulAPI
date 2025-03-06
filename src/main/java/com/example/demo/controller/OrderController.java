@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.Order;
+import com.example.demo.domain.response.order.ResCreateOrderDTO;
 import com.example.demo.service.OrderService;
 
 import jakarta.validation.Valid;
@@ -23,9 +24,12 @@ public class OrderController {
     }
 
     @PostMapping("/orders")
-    public ResponseEntity<Order> createNewOrder(@Valid @RequestBody Order createOrder) {
+    public ResponseEntity<ResCreateOrderDTO> createNewOrder(@Valid @RequestBody Order createOrder) {
+        Order newOrder = this.orderService.handleCreateOrder(createOrder);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        // convert Order -> ResCreateOrderDTO
+        ResCreateOrderDTO orderDTO = this.orderService.convertToResCreateOrderDTO(newOrder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderDTO);
     }
 
 }

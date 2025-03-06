@@ -1,4 +1,4 @@
-package com.example.demo.util.validation.gender;
+package com.example.demo.util.validation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,10 +10,10 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = GenderEnumPatternValidator.class)
+@Constraint(validatedBy = EnumPatternValidator.class)
 @Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE }) 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface GenderEnumPattern {
+public @interface EnumPattern {
     String name();
 
     String regexp();

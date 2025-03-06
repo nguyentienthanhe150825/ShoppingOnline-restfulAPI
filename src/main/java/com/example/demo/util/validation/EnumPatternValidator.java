@@ -1,4 +1,4 @@
-package com.example.demo.util.validation.gender;
+package com.example.demo.util.validation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,12 +7,12 @@ import java.util.regex.PatternSyntaxException;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class GenderEnumPatternValidator implements ConstraintValidator<GenderEnumPattern, Enum<?>>{
+public class EnumPatternValidator implements ConstraintValidator<EnumPattern, Enum<?>>{
 
     private Pattern pattern;
 
     @Override
-    public void initialize(GenderEnumPattern enumPattern) {
+    public void initialize(EnumPattern enumPattern) {
         try {
             pattern = Pattern.compile(enumPattern.regexp());
         } catch (PatternSyntaxException e) {

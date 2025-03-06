@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import com.example.demo.util.constant.PaymentMethodEnum;
 import com.example.demo.util.constant.StatusEnum;
+import com.example.demo.util.validation.EnumPattern;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +31,7 @@ public class Order {
     
     private double totalPrice;
 
-    @Enumerated(EnumType.STRING)
+    @EnumPattern(name = "status", regexp = "PENDING|SHIPPED|DELIVERED|CANCELLED")
     private StatusEnum status;
 
     @Column(columnDefinition = "MEDIUMTEXT")

@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.List;
 
 import com.example.demo.util.constant.GenderEnum;
-import com.example.demo.util.validation.gender.GenderEnumPattern;
+import com.example.demo.util.validation.EnumPattern;
 import com.example.demo.util.validation.phone.PhoneNumber;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -41,7 +41,7 @@ public class User {
     @NotBlank(message = "Password cannot be blank")
     private String password;
 
-    @GenderEnumPattern(name = "gender", regexp = "MALE|FEMALE|OTHER")
+    @EnumPattern(name = "gender", regexp = "MALE|FEMALE|OTHER")
     private GenderEnum gender;
 
     @Email(message = "Email invalid format")
