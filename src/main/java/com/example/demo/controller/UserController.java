@@ -1,8 +1,12 @@
 package com.example.demo.controller;
 
+import java.net.URISyntaxException;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.domain.User;
 import com.example.demo.domain.response.ResultPaginationDTO;
+import com.example.demo.domain.response.file.ResUploadFileDTO;
 import com.example.demo.domain.response.user.ResUpdateUserDTO;
 import com.example.demo.domain.response.user.ResUserDTO;
 import com.example.demo.service.UserService;
@@ -28,6 +35,9 @@ import jakarta.validation.Valid;
 public class UserController {
     // Dependency Inject: Constructor
     private final UserService userService;
+
+    @Value("${tomosia.upload-file.base-uri}")
+    private String baseURI;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -58,7 +68,7 @@ public class UserController {
 
     @GetMapping("/users")
     ResponseEntity<ResultPaginationDTO> getAllUsers(@Filter Specification<User> spec, Pageable pageable) {
-        
+
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUsers(spec, pageable));
     }
 
@@ -68,7 +78,7 @@ public class UserController {
         if (userUpdate == null) {
             throw new InvalidException("User with id = " + requestUser.getId() + " not exist");
         }
-        
+
         ResUpdateUserDTO userDTO = this.userService.convertToResUpdateUserDTO(userUpdate);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(userDTO);
     }
@@ -81,5 +91,25 @@ public class UserController {
         }
         this.userService.handleDeleteUser(id);
         return ResponseEntity.status(HttpStatus.OK).body("Delete User Success");
+    }
+
+    @PutMapping(value = "/users/{id}/avatar", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<ResUploadFileDTO> upload(@PathVariable("id") long id,
+            @RequestParam(name = "file", required = false) MultipartFile file,
+            @RequestParam("folder") String folder) throws InvalidException, URISyntaxException {
+
+        User user = this.userService.handleGetUserById(id);
+        if (user == null) {
+            throw new InvalidException("User with id = " + id + " not exist");
+        }
+        // create a directory if not exist
+        this.userService.createDirectory(baseURI + folder);
+
+        // store avatar
+        String uploadAvatar = this.userService.storeAvatar(baseURI + folder, file);
+
+        ResUploadFileDTO res = new ResUploadFileDTO();
+
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 }
