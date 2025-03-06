@@ -1,10 +1,17 @@
 package com.example.demo.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.User;
+import com.example.demo.domain.response.Meta;
+import com.example.demo.domain.response.ResultPaginationDTO;
 import com.example.demo.domain.response.user.ResUpdateUserDTO;
 import com.example.demo.domain.response.user.ResUserDTO;
 import com.example.demo.repository.UserRepository;
@@ -31,7 +38,7 @@ public class UserService {
         res.setEmail(user.getEmail());
         res.setAddress(user.getAddress());
         res.setCreateAt(user.getCreateAt());
-        
+
         return res;
     }
 
@@ -71,7 +78,29 @@ public class UserService {
         res.setEmail(user.getEmail());
         res.setAddress(user.getAddress());
         res.setUpdatedAt(user.getUpdatedAt());
-        
+
         return res;
+    }
+
+    public ResultPaginationDTO fetchAllUsers(Specification<User> spec, Pageable pageable) {
+        Page<User> pageUser = this.userRepository.findAll(spec, pageable);
+        ResultPaginationDTO result = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+
+        meta.setPages(pageUser.getTotalPages());
+        meta.setTotal(pageUser.getTotalElements());
+
+        result.setMeta(meta);
+
+        // convert User -> UserDTO
+        List<ResUserDTO> listUsers = pageUser.getContent().stream().map(item -> this.convertToResUserDTO(item))
+                .collect(Collectors.toList());
+
+        result.setResult(listUsers);
+
+        return result;
     }
 }

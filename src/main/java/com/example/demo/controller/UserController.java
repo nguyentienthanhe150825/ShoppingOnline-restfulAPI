@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.User;
+import com.example.demo.domain.response.ResultPaginationDTO;
 import com.example.demo.domain.response.user.ResUpdateUserDTO;
 import com.example.demo.domain.response.user.ResUserDTO;
 import com.example.demo.service.UserService;
 import com.example.demo.util.exception.InvalidException;
+import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 
@@ -49,6 +53,12 @@ public class UserController {
         }
         ResUserDTO userDTO = this.userService.convertToResUserDTO(user);
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
+    }
+
+    @GetMapping("/users")
+    ResponseEntity<ResultPaginationDTO> getAllUsers(@Filter Specification<User> spec, Pageable pageable) {
+        
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUsers(spec, pageable));
     }
 
     @PutMapping("/users")
