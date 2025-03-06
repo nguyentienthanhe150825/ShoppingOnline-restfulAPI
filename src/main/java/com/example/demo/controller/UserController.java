@@ -26,6 +26,7 @@ import com.example.demo.domain.response.user.ResUpdateUserDTO;
 import com.example.demo.domain.response.user.ResUserDTO;
 import com.example.demo.service.UserService;
 import com.example.demo.util.exception.InvalidException;
+import com.example.demo.util.exception.StorageException;
 import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
@@ -96,12 +97,18 @@ public class UserController {
     @PutMapping(value = "/users/{id}/avatar", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<ResUpdateUserDTO> upload(@PathVariable("id") long id,
             @RequestParam(name = "file", required = false) MultipartFile file,
-            @RequestParam("folder") String folder) throws InvalidException, URISyntaxException, IOException {
+            @RequestParam("folder") String folder) throws InvalidException, URISyntaxException, IOException, StorageException {
         // check user id exist
         User user = this.userService.handleGetUserById(id);
         if (user == null) {
             throw new InvalidException("User with id = " + id + " not exist");
         }
+
+        // Check file is empty
+        if (file == null || file.isEmpty()) {
+            throw new StorageException("File is empty. Please upload a file.");
+        }
+
         // create a directory if not exist
         this.userService.createDirectory(baseURI + folder);
 
@@ -111,7 +118,7 @@ public class UserController {
         // save avatarUrl in database
         User updateUserAvatar = this.userService.uploadAvatarInDatabase(uploadAvatar, id);
 
-        // conver to ResUploadAvatarDTO
+        // convert to ResUploadAvatarDTO
         ResUpdateUserDTO res = this.userService.convertToResUpdateUserDTO(updateUserAvatar);
 
         return ResponseEntity.status(HttpStatus.OK).body(res);
