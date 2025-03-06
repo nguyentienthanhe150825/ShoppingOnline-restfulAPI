@@ -40,6 +40,7 @@ public class Order {
     @EnumPattern(name = "status", regexp = "CREDITCARD|PAYPAL|COD")
     private PaymentMethodEnum paymentMethod;
 
+    @Column(unique = true)
     private String trackingNumber;
 
     private Instant orderDate;

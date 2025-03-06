@@ -111,4 +111,8 @@ public class OrderService {
         return statusDTO;
     }
 
+    public void handleDeleteOrder(long id) {
+        this.orderRepository.deleteById(id);
+    }
+
 }
