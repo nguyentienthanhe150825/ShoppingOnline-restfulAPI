@@ -1,4 +1,4 @@
-package com.example.demo.util.exception;
+package com.example.demo.util.validation.phone;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

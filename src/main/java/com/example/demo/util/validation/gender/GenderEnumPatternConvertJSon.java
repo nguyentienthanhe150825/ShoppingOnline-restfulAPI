@@ -1,4 +1,4 @@
-package com.example.demo.util.exception;
+package com.example.demo.util.validation.gender;
 
 import java.io.IOException;
 

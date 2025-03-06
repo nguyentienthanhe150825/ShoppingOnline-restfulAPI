@@ -4,8 +4,8 @@ import java.time.Instant;
 import java.util.List;
 
 import com.example.demo.util.constant.GenderEnum;
-import com.example.demo.util.exception.GenderEnumPattern;
-import com.example.demo.util.exception.PhoneNumber;
+import com.example.demo.util.validation.gender.GenderEnumPattern;
+import com.example.demo.util.validation.phone.PhoneNumber;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
