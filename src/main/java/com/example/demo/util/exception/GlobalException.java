@@ -11,6 +11,8 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.example.demo.domain.response.ResResponse;
 
+import jakarta.validation.ConstraintViolationException;
+
 @RestControllerAdvice
 public class GlobalException {
 
@@ -57,5 +59,17 @@ public class GlobalException {
         res.setMessage(ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ResResponse<Object>> handleConstraintViolationException(Exception ex, WebRequest request) {
+        ResResponse<Object> res = new ResResponse<>();
+        res.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        res.setError(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        res.setTimestamp(new Date());
+        res.setPath(request.getDescription(false).replace("uri=", ""));
+        res.setMessage(ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.domain.Order;
 import com.example.demo.domain.response.ResultPaginationDTO;
 import com.example.demo.domain.response.order.ResOrderDTO;
+import com.example.demo.domain.response.order.ResOrderStatusDTO;
 import com.example.demo.service.OrderService;
 import com.example.demo.util.exception.InvalidException;
 import com.turkraft.springfilter.boot.Filter;
@@ -55,6 +57,17 @@ public class OrderController {
         ResultPaginationDTO result = this.orderService.fetchAllOrders(spec, pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @PutMapping("/orders")
+    public ResponseEntity<ResOrderStatusDTO> updateOrderStatus(@Valid @RequestBody Order requestOrder) throws InvalidException {
+        Order order = this.orderService.handleUpdateOrderStatus(requestOrder);
+        if (order == null) {
+            throw new InvalidException("Order with id = " + requestOrder.getId() + " not exist");
+        }
+        // convert Order -> ResOrderStatusDTO
+        ResOrderStatusDTO statusDTO = this.orderService.convertToResOrderStatusDTO(order);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(statusDTO);
     }
 
 }

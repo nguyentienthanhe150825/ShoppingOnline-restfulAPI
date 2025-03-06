@@ -62,7 +62,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public ResponseEntity<ResUpdateUserDTO> updateUser(@RequestBody User requestUser) throws InvalidException {
+    public ResponseEntity<ResUpdateUserDTO> updateUser(@Valid @RequestBody User requestUser) throws InvalidException {
         User userUpdate = this.userService.handleUpdateUser(requestUser);
         if (userUpdate == null) {
             throw new InvalidException("User with id = " + requestUser.getId() + " not exist");

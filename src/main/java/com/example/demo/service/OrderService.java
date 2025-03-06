@@ -14,7 +14,10 @@ import com.example.demo.domain.User;
 import com.example.demo.domain.response.Meta;
 import com.example.demo.domain.response.ResultPaginationDTO;
 import com.example.demo.domain.response.order.ResOrderDTO;
+import com.example.demo.domain.response.order.ResOrderStatusDTO;
 import com.example.demo.repository.OrderRepository;
+
+import jakarta.validation.Valid;
 
 @Service
 public class OrderService {
@@ -85,10 +88,27 @@ public class OrderService {
 
         List<ResOrderDTO> listOrders = pageOrder.getContent().stream().map(item -> this.convertToResOrderDTO(item))
                 .collect(Collectors.toList());
-        
+
         result.setResult(listOrders);
 
         return result;
+    }
+
+    public Order handleUpdateOrderStatus(Order requestOrder) {
+        Order currentOrder = this.handleGetOrderById(requestOrder.getId());
+        if (currentOrder != null) {
+            currentOrder.setStatus(requestOrder.getStatus());
+            currentOrder = this.orderRepository.save(currentOrder);
+        }
+
+        return currentOrder;
+    }
+
+    public ResOrderStatusDTO convertToResOrderStatusDTO(Order order) {
+        ResOrderStatusDTO statusDTO = new ResOrderStatusDTO();
+        statusDTO.setId(order.getId());
+        statusDTO.setStatus(order.getStatus());
+        return statusDTO;
     }
 
 }
