@@ -28,7 +28,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    
+
     private double totalPrice;
 
     @EnumPattern(name = "status", regexp = "PENDING|SHIPPED|DELIVERED|CANCELLED")
@@ -37,7 +37,7 @@ public class Order {
     @Column(columnDefinition = "MEDIUMTEXT")
     private String shippingAddress;
 
-    @Enumerated(EnumType.STRING)
+    @EnumPattern(name = "status", regexp = "CREDITCARD|PAYPAL|COD")
     private PaymentMethodEnum paymentMethod;
 
     private String trackingNumber;
