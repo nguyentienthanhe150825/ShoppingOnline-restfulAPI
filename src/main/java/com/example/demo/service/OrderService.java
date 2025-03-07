@@ -18,8 +18,7 @@ import com.example.demo.domain.response.order.ResOrderDTO;
 import com.example.demo.domain.response.order.ResOrderStatusDTO;
 import com.example.demo.repository.OrderDetailRepository;
 import com.example.demo.repository.OrderRepository;
-
-import jakarta.validation.Valid;
+import com.example.demo.util.constant.StatusEnum;
 
 @Service
 public class OrderService {
@@ -44,6 +43,7 @@ public class OrderService {
                 order.setUser(null);
             }
         }
+        order.setStatus(StatusEnum.PENDING);
         return this.orderRepository.save(order);
     }
 
