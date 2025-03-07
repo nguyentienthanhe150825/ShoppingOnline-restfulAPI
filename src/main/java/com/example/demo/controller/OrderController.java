@@ -60,7 +60,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @PutMapping("/orders")
+    @PutMapping("/orders/status")
     public ResponseEntity<ResOrderStatusDTO> updateOrderStatus(@Valid @RequestBody Order requestOrder) throws InvalidException {
         Order order = this.orderService.handleUpdateOrderStatus(requestOrder);
         if (order == null) {

@@ -10,11 +10,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.Order;
+import com.example.demo.domain.OrderDetail;
 import com.example.demo.domain.User;
 import com.example.demo.domain.response.Meta;
 import com.example.demo.domain.response.ResultPaginationDTO;
 import com.example.demo.domain.response.order.ResOrderDTO;
 import com.example.demo.domain.response.order.ResOrderStatusDTO;
+import com.example.demo.repository.OrderDetailRepository;
 import com.example.demo.repository.OrderRepository;
 
 import jakarta.validation.Valid;
@@ -24,10 +26,12 @@ public class OrderService {
     // Dependency Inject: Constructor
     private final OrderRepository orderRepository;
     private final UserService userService;
+    private final OrderDetailRepository orderDetailRepository;
 
-    public OrderService(OrderRepository orderRepository, UserService userService) {
+    public OrderService(OrderRepository orderRepository, UserService userService, OrderDetailRepository orderDetailRepository) {
         this.orderRepository = orderRepository;
         this.userService = userService;
+        this.orderDetailRepository = orderDetailRepository;
     }
 
     public Order handleCreateOrder(Order order) {
@@ -112,6 +116,14 @@ public class OrderService {
     }
 
     public void handleDeleteOrder(long id) {
+        Order currentOrder = this.handleGetOrderById(id);
+        List<OrderDetail> orderDetails = currentOrder.getOrderDetails();
+        for (OrderDetail orderDetail : orderDetails) {
+            // Delete Order-detail
+            this.orderDetailRepository.deleteById(orderDetail.getId());
+        }
+
+        // Delete Order
         this.orderRepository.deleteById(id);
     }
 
