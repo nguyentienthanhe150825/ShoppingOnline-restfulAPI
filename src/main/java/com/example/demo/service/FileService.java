@@ -43,7 +43,7 @@ public class FileService {
         }
     }
 
-    public String storeFile(String folder, MultipartFile file) throws URISyntaxException, IOException {
+    public String uploadFile(String folder, MultipartFile file) throws URISyntaxException, IOException {
         // create unique fileName
         String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
 

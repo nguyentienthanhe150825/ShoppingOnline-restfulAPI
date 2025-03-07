@@ -116,10 +116,10 @@ public class UserController {
         this.fileService.createDirectory(baseURI + folder);
 
         // store avatar
-        String uploadAvatar = this.fileService.storeFile(baseURI + folder, file);
+        String uploadAvatar = this.fileService.uploadFile(baseURI + folder, file);
 
         // save avatarUrl in database
-        User updateUserAvatar = this.userService.uploadAvatarInDatabase(uploadAvatar, id);
+        User updateUserAvatar = this.userService.saveAvatarInDatabase(uploadAvatar, id);
 
         // convert to ResUploadAvatarDTO
         ResUpdateUserDTO res = this.userService.convertToResUpdateUserDTO(updateUserAvatar);

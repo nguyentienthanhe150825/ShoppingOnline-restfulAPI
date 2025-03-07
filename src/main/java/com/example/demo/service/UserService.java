@@ -123,7 +123,7 @@ public class UserService {
         this.userRepository.deleteById(id);
     }
 
-    public User uploadAvatarInDatabase(String uploadAvatar, long id) {
+    public User saveAvatarInDatabase(String uploadAvatar, long id) {
         User currentUser = this.handleGetUserById(id);
         if (currentUser != null) {
             currentUser.setAvatar(uploadAvatar);
