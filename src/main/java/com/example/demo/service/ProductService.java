@@ -2,9 +2,14 @@ package com.example.demo.service;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.Product;
+import com.example.demo.domain.response.Meta;
+import com.example.demo.domain.response.ResultPaginationDTO;
 import com.example.demo.repository.ProductRepository;
 
 @Service
@@ -33,6 +38,24 @@ public class ProductService {
         product.setImage(uploadImageUrl);
 
         return this.productRepository.save(product);
+    }
+
+    public ResultPaginationDTO fetchAllProductsWithPagination(Specification<Product> spec, Pageable pageable) {
+        Page<Product> pageProduct = this.productRepository.findAll(spec, pageable);
+
+        ResultPaginationDTO result = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+
+        meta.setPages(pageProduct.getTotalPages());
+        meta.setTotal(pageProduct.getTotalElements());
+
+        result.setMeta(meta);
+        result.setResult(pageProduct.getContent());
+
+        return result;
     }
 
 }

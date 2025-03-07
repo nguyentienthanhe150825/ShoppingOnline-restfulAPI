@@ -4,10 +4,14 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,11 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.domain.Product;
+import com.example.demo.domain.response.ResultPaginationDTO;
 import com.example.demo.domain.response.file.ResUploadFileDTO;
 import com.example.demo.service.FileService;
 import com.example.demo.service.ProductService;
+import com.example.demo.util.exception.InvalidException;
 import com.example.demo.util.exception.StorageException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 
@@ -66,7 +73,7 @@ public class ProductController {
         // Save Product in database
         Product product = this.productService.handleCreateProduct(createProduct);
 
-        return ResponseEntity.status(HttpStatus.OK).body(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
     @PutMapping(value = "/products/upload/image", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -93,6 +100,22 @@ public class ProductController {
         res.setUploadedAt(Instant.now());
 
         return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
+
+    @GetMapping("/products/{id}")
+    public ResponseEntity<Product> getProductById (@PathVariable("id") long id) throws InvalidException {
+        Product product = this.productService.handleGetProducById(id);
+        if (product == null) {
+            throw new InvalidException("Product with id = " + id + " not exist.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(product);
+    }
+
+    @GetMapping("/products")
+    public ResponseEntity<ResultPaginationDTO> getAllProducts(@Filter Specification<Product> spec, Pageable pageable) {
+        ResultPaginationDTO result = this.productService.fetchAllProductsWithPagination(spec, pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
 }
