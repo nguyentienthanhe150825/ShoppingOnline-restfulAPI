@@ -48,14 +48,15 @@ public class FileController {
             throw new StorageException("Missing request param: (fileName or folder not exist)");
         }
 
-        // check file exist (and not a directory)
+        // check file exist (and not a directory) and get file length
         long fileLength = this.fileService.getFileLength(fileName, baseURI, folder);
         if (fileLength == 0) {
             throw new StorageException("File with name = " + fileName + " not found");
         }
 
         // download single file
-        InputStreamResource resource = this.fileService.getResource(fileName, baseURI, folder);
+        // Lấy nội dung file dưới dạng InputStreamResource và truyền file từ server tới client
+        InputStreamResource resource = this.fileService.getResource(fileName, baseURI, folder);  
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
@@ -75,7 +76,7 @@ public class FileController {
         String fileName = "users_" + LocalDate.now() + ".xlsx"; // Xác định tên và loại tệp tải xuống
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)   
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)   // attachment: Yêu cầu trình duyệt tải file
                 .contentType(MediaType.APPLICATION_OCTET_STREAM) // Định dạng nội dung phản hồi là 1 file nhị phân
                 .body(excelData);
       

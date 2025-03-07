@@ -24,6 +24,7 @@ import com.example.demo.domain.User;
 import com.example.demo.domain.response.ResultPaginationDTO;
 import com.example.demo.domain.response.user.ResUpdateUserDTO;
 import com.example.demo.domain.response.user.ResUserDTO;
+import com.example.demo.service.FileService;
 import com.example.demo.service.UserService;
 import com.example.demo.util.exception.InvalidException;
 import com.example.demo.util.exception.StorageException;
@@ -36,12 +37,14 @@ import jakarta.validation.Valid;
 public class UserController {
     // Dependency Inject: Constructor
     private final UserService userService;
+    private final FileService fileService;
 
     @Value("${tomosia.upload-file.base-uri}")
     private String baseURI;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, FileService fileService) {
         this.userService = userService;
+        this.fileService = fileService;
     }
 
     @PostMapping("/users")
@@ -110,10 +113,10 @@ public class UserController {
         }
 
         // create a directory if not exist
-        this.userService.createDirectory(baseURI + folder);
+        this.fileService.createDirectory(baseURI + folder);
 
         // store avatar
-        String uploadAvatar = this.userService.storeAvatar(baseURI + folder, file);
+        String uploadAvatar = this.fileService.storeFile(baseURI + folder, file);
 
         // save avatarUrl in database
         User updateUserAvatar = this.userService.uploadAvatarInDatabase(uploadAvatar, id);
