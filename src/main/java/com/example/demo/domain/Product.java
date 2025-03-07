@@ -60,6 +60,10 @@ public class Product {
     @JsonIgnore
     private List<OrderDetail> orderDetails;
 
+    public Product () {
+        
+    }
+
     @PrePersist
     public void handleBeforeCreate() {
         this.createAt = Instant.now();
