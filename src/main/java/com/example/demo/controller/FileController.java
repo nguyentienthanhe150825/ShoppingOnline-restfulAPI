@@ -30,24 +30,24 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @GetMapping("/files")
+    @GetMapping("/files/export")
     public ResponseEntity<Resource> downloadFile(
             @RequestParam(name = "fileName", required = false) String fileName,
             @RequestParam(name = "folder", required = false) String folder) throws StorageException, URISyntaxException, FileNotFoundException {
 
         // check file or folder exist
-        if (fileName == null || folder == null) {
+        if (fileName == null) {
             throw new StorageException("Missing request param: (fileName or folder not exist)");
         }
 
         // check file exist (and not a directory)
-        long fileLength = this.fileService.getFileLength(fileName, baseURI + folder);
+        long fileLength = this.fileService.getFileLength(fileName, baseURI, folder);
         if (fileLength == 0) {
             throw new StorageException("File with name = " + fileName + " not found");
         }
 
         // download single file
-        InputStreamResource resource = this.fileService.getResource(fileName, baseURI + folder);
+        InputStreamResource resource = this.fileService.getResource(fileName, baseURI, folder);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")

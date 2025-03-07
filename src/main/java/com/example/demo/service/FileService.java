@@ -14,8 +14,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class FileService {
 
-    public long getFileLength(String fileName, String folder) throws URISyntaxException {
-        URI uri = new URI(folder + "/" + fileName);
+    public long getFileLength(String fileName, String baseURI, String folder) throws URISyntaxException {
+        String str = "";
+        if (folder == null) {
+            str = baseURI + fileName;
+        } else {
+            str = baseURI + folder + "/" + fileName;
+        }
+        URI uri = new URI(str);
         Path path = Paths.get(uri);
 
         File tmpDir = new File(path.toString());
@@ -27,8 +33,14 @@ public class FileService {
         return tmpDir.length();
     }
 
-    public InputStreamResource getResource(String fileName, String folder) throws URISyntaxException, FileNotFoundException {
-        URI uri = new URI(folder + "/" + fileName);
+    public InputStreamResource getResource(String fileName, String baseURI, String folder) throws URISyntaxException, FileNotFoundException {
+        String str = "";
+        if (folder == null) {
+            str = baseURI + fileName;
+        } else {
+            str = baseURI + folder + "/" + fileName;
+        }
+        URI uri = new URI(str);
         Path path = Paths.get(uri);
 
         File file = new File(path.toString());
