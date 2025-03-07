@@ -70,7 +70,7 @@ public class UserController {
     @GetMapping("/users")
     ResponseEntity<ResultPaginationDTO> getAllUsers(@Filter Specification<User> spec, Pageable pageable) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUsers(spec, pageable));
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUsersWithPagination(spec, pageable));
     }
 
     @PutMapping("/users")

@@ -98,7 +98,7 @@ public class UserService {
         return res;
     }
 
-    public ResultPaginationDTO fetchAllUsers(Specification<User> spec, Pageable pageable) {
+    public ResultPaginationDTO fetchAllUsersWithPagination(Specification<User> spec, Pageable pageable) {
         Page<User> pageUser = this.userRepository.findAll(spec, pageable);
         ResultPaginationDTO result = new ResultPaginationDTO();
         Meta meta = new Meta();
@@ -170,6 +170,10 @@ public class UserService {
             currentUser.setAvatar(uploadAvatar);
         }
         return this.userRepository.save(currentUser);
+    }
+
+    public List<User> getAllUsers() {
+        return this.userRepository.findAll();
     }
     
 }
