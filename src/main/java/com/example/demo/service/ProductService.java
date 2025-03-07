@@ -58,4 +58,14 @@ public class ProductService {
         return result;
     }
 
+    public Product handleUpdateProduct(Product currentProduct, Product requestProduct) {
+        currentProduct.setName(requestProduct.getName());
+        currentProduct.setQuantity(requestProduct.getQuantity());
+        currentProduct.setPrice(requestProduct.getPrice());
+        currentProduct.setDetailDesc(requestProduct.getDetailDesc());
+        currentProduct.setBrand(requestProduct.getBrand());
+
+        return this.productRepository.save(currentProduct);
+    }
+
 }

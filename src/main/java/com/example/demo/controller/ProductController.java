@@ -29,6 +29,8 @@ import com.example.demo.service.FileService;
 import com.example.demo.service.ProductService;
 import com.example.demo.util.exception.InvalidException;
 import com.example.demo.util.exception.StorageException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turkraft.springfilter.boot.Filter;
 
@@ -76,6 +78,34 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
+    @PutMapping(value = "/products", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Product> updateProduct(@RequestPart("product") String productString,
+            @RequestPart(name = "file", required = false) MultipartFile file, @RequestParam("folder") String folder)
+            throws IOException, URISyntaxException, InvalidException {
+
+        // Convert JSON String into Product Object
+        Product requestProduct = objectMapper.readValue(productString, Product.class);
+
+        Product currentProduct = this.productService.handleGetProducById(requestProduct.getId());
+        if (currentProduct == null) {
+            throw new InvalidException("Product with id = " + requestProduct.getId() + " not exist");
+        }
+
+        // create a directory if not exist
+        this.fileService.createDirectory(baseURI + folder);
+
+        // Upload Product Image and Get Image URL
+        String uploadImageUrl = this.fileService.uploadFile(baseURI + folder, file);
+
+        // Set URL ảnh vào Product
+        currentProduct.setImage(uploadImageUrl);
+
+        // Save Product in database
+        Product product = this.productService.handleUpdateProduct(currentProduct, requestProduct);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(product);
+    }
+
     @PutMapping(value = "/products/upload/image", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<ResUploadFileDTO> upload(@RequestParam("productId") long productId,
             @RequestParam(name = "file", required = false) MultipartFile file,
@@ -103,7 +133,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<Product> getProductById (@PathVariable("id") long id) throws InvalidException {
+    public ResponseEntity<Product> getProductById(@PathVariable("id") long id) throws InvalidException {
         Product product = this.productService.handleGetProducById(id);
         if (product == null) {
             throw new InvalidException("Product with id = " + id + " not exist.");
