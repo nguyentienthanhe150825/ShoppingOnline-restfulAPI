@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -146,6 +147,16 @@ public class ProductController {
         ResultPaginationDTO result = this.productService.fetchAllProductsWithPagination(spec, pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable("id") long id) throws InvalidException {
+        Product currentProduct = this.productService.handleGetProducById(id);
+        if (currentProduct == null) {
+            throw new InvalidException("Product with id = " + id + " not exist");
+        }
+        this.productService.handleDeleteProduct(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Delete Success");
     }
 
 }
