@@ -23,6 +23,7 @@ import com.example.demo.domain.response.file.ResUploadFileDTO;
 import com.example.demo.service.FileService;
 import com.example.demo.service.ProductService;
 import com.example.demo.util.exception.StorageException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.Valid;
 
@@ -33,18 +34,25 @@ public class ProductController {
     private final ProductService productService;
     private final FileService fileService;
 
+    // Inject ObjectMapper vào Controller
+    private final ObjectMapper objectMapper;
+
     @Value("${tomosia.upload-file.base-uri}")
     private String baseURI;
 
-    public ProductController(ProductService productService, FileService fileService) {
+    public ProductController(ProductService productService, FileService fileService, ObjectMapper objectMapper) {
         this.productService = productService;
         this.fileService = fileService;
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping(value = "/products", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<Product> createNewProduct(@RequestPart("product") @Valid Product createProduct,
+    public ResponseEntity<Product> createNewProduct(@RequestPart("product") String productString,
             @RequestPart(name = "file", required = false) MultipartFile file, @RequestParam("folder") String folder)
             throws StorageException, URISyntaxException, IOException {
+
+        // Convert JSON String into Product Object
+        Product createProduct = objectMapper.readValue(productString, Product.class);
 
         // create a directory if not exist
         this.fileService.createDirectory(baseURI + folder);
